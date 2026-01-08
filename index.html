@@ -3,110 +3,242 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#05060a" />
   <title>Worm Colony • $WORM</title>
 
-  <!-- MUST match your folders -->
-  <link rel="stylesheet" href="./assets/css/styles.css?v=wc-20260108-1">
+  <!-- Root file paths (your repo shows: index.html, styles.css, script.js) -->
+  <link rel="stylesheet" href="./styles.css?v=99" />
 </head>
 
 <body>
-  <div class="app">
+  <div class="bgFx" aria-hidden="true">
+    <div class="bgGlow"></div>
+    <div class="bgGrid"></div>
+  </div>
 
-    <header class="topbar glass">
+  <main class="app" role="main">
+    <!-- Header -->
+    <header class="topbar panel">
       <div class="brand">
-        <div class="logoBox" aria-hidden="true">
-          <img
-            id="logoImg"
-            src="https://i.postimg.cc/hGj8JD0V/1614F03F-52AD-453C-8DB1-09A3B29F3469.png"
-            alt="Worm Colony logo"
-            loading="eager"
-          />
+        <div class="brandIcon" aria-hidden="true">
+          <!-- logo image is loaded by CSS/JS if you use it; fallback icon -->
+          <div class="brandMark"></div>
         </div>
+
         <div class="brandText">
-          <div class="title">Worm Colony</div>
-          <div class="sub">$WORM • LIVE COLONY</div>
+          <div class="brandTitle">Worm Colony</div>
+          <div class="brandSub">
+            <span class="pill">$WORM</span>
+            <span class="sep">•</span>
+            <span class="muted">LIVE COLONY</span>
+          </div>
         </div>
       </div>
 
-      <div class="status">
-        <div class="chip">
-          <span class="dot"></span>
-          <span>SIMULATION ACTIVE</span>
-        </div>
-        <div class="micro">Growth driven by buyers, volume, and market cap.</div>
+      <div class="statusChip" id="simStatus" title="Simulation status">
+        <span class="dot"></span>
+        <span class="label">Simulation Active</span>
       </div>
     </header>
 
-    <!-- SIMULATION TOP -->
-    <section class="simWrap glass">
-      <div class="simViewport">
-        <canvas id="c"></canvas>
-
-        <div class="simHud">
-          <div class="hudRow">
-            <div class="pill" id="sigPill">
-              <span class="pillK">COLONY SIGNATURE</span>
-              <span class="pillV" id="signature">WORM-XXXX-XXXX</span>
-            </div>
-            <div class="pill" id="dnaPill">
-              <span class="pillK">DNA</span>
-              <span class="pillV" id="dnaBadge">—</span>
-            </div>
-          </div>
+    <!-- SIMULATION FIRST (no overlay) -->
+    <section class="simWrap panel" aria-label="Worm Colony Simulation">
+      <div class="simHeader">
+        <div class="simTitle">
+          <span class="pill pillSoft">$WORM</span>
+          <span class="muted">SIMULATION</span>
         </div>
 
-        <div class="hint">
+        <div class="simHints muted">
           Tap colonies • Drag pan • Pinch zoom • Double tap center
         </div>
       </div>
-    </section>
 
-    <!-- UI BELOW (no overlay) -->
-    <section class="uiWrap">
-      <div class="glass statsCard">
-        <div class="statsGrid">
-          <div class="stat"><div class="k">BUYERS</div><div class="v" id="buyers">0</div></div>
-          <div class="stat"><div class="k">VOLUME</div><div class="v" id="vol">$0</div></div>
-          <div class="stat"><div class="k">M CAP</div><div class="v" id="mcap">$25,000</div></div>
-          <div class="stat"><div class="k">COLONIES</div><div class="v" id="cols">1</div></div>
-          <div class="stat"><div class="k">WORMS</div><div class="v" id="worms">0</div></div>
+      <div class="canvasFrame" id="canvasFrame">
+        <!-- IMPORTANT: the canvas id your JS expects -->
+        <canvas id="simCanvas"></canvas>
+
+        <!-- Overlay HUD (JS fills these) -->
+        <div class="hud" id="hud">
+          <div class="hudCard" id="hudCard">
+            <div class="hudRow">
+              <div class="hudLabel">Selected</div>
+              <div class="hudValue" id="hudSelected">Colony #1</div>
+            </div>
+            <div class="hudRow">
+              <div class="hudLabel">DNA</div>
+              <div class="hudValue" id="hudDNA">—</div>
+            </div>
+            <div class="hudRow">
+              <div class="hudLabel">Biome</div>
+              <div class="hudValue" id="hudBiome">—</div>
+            </div>
+            <div class="hudRow">
+              <div class="hudLabel">Style</div>
+              <div class="hudValue" id="hudStyle">—</div>
+            </div>
+
+            <div class="badgeRow" id="dnaBadges" aria-label="DNA Badges">
+              <!-- JS can inject DNA badges here -->
+            </div>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="glass controlsCard">
+    <!-- Stats + Controls (below simulation) -->
+    <section class="grid2">
+      <!-- Stats -->
+      <section class="panel">
+        <div class="sectionTitle">
+          <span class="muted">STATUS</span>
+          <span class="pill pillSoft" id="nutrientPill">Nutrients</span>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="k">Buyers</div>
+            <div class="v" id="statBuyers">0</div>
+          </div>
+          <div class="stat">
+            <div class="k">Volume</div>
+            <div class="v" id="statVolume">$0</div>
+          </div>
+          <div class="stat">
+            <div class="k">M Cap</div>
+            <div class="v" id="statMcap">$0</div>
+          </div>
+          <div class="stat">
+            <div class="k">Colonies</div>
+            <div class="v" id="statColonies">1</div>
+          </div>
+          <div class="stat">
+            <div class="k">Worms</div>
+            <div class="v" id="statWorms">0</div>
+          </div>
+          <div class="stat">
+            <div class="k">Splits</div>
+            <div class="v" id="statSplits">0</div>
+          </div>
+        </div>
+
+        <div class="progressWrap">
+          <div class="progressLabel muted">
+            New colonies spawn every <strong>$50k</strong> MC (cap 8 colonies)
+          </div>
+          <div class="progressBar">
+            <div class="progressFill" id="splitProgressFill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="signatureRow">
+          <div class="signatureLabel muted">Colony Signature</div>
+          <div class="signatureBox">
+            <div class="sigCode" id="colonySig">WORM-XXXX-XXXX</div>
+            <div class="sigInk" aria-hidden="true"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Controls -->
+      <section class="panel">
+        <div class="sectionTitle">
+          <span class="muted">CONTROLS</span>
+          <span class="pill pillSoft" id="eventPill">Events</span>
+        </div>
+
         <div class="btnGrid">
-          <button class="btn primary" id="feedBtn">FEED</button>
-          <button class="btn" id="smallBtn">SMALL BUY</button>
+          <!-- Keep ids stable; JS should hook to these -->
+          <button class="btn" id="btnFeed" type="button">Feed</button>
+          <button class="btn" id="btnSmallBuy" type="button">Small Buy</button>
 
-          <button class="btn" id="whaleBtn">WHALE BUY</button>
-          <button class="btn" id="sellBtn">SELL-OFF</button>
+          <button class="btn" id="btnWhaleBuy" type="button">Whale Buy</button>
+          <button class="btn" id="btnSellOff" type="button">Sell-off</button>
 
-          <button class="btn" id="stormBtn">VOLUME STORM</button>
-          <button class="btn neon" id="mutateBtn">MUTATE</button>
+          <button class="btn" id="btnVolumeStorm" type="button">Volume Storm</button>
+          <button class="btn" id="btnMutate" type="button">Mutate</button>
 
-          <button class="btn" id="focusBtn">FOCUS: OFF</button>
-          <button class="btn" id="zoomInBtn">ZOOM +</button>
+          <button class="btn" id="btnFocus" type="button">Focus: Off</button>
+          <button class="btn" id="btnZoomIn" type="button">Zoom +</button>
 
-          <button class="btn" id="zoomOutBtn">ZOOM −</button>
-          <button class="btn primary" id="captureBtn">CAPTURE</button>
+          <button class="btn" id="btnZoomOut" type="button">Zoom −</button>
+          <button class="btn" id="btnCapture" type="button">Capture</button>
 
-          <button class="btn danger" id="resetBtn">RESET</button>
+          <button class="btn btnDanger" id="btnReset" type="button">Reset</button>
         </div>
-      </div>
 
-      <div class="glass logCard">
-        <div class="logHead">
-          <div class="logTitle">Mutation Log</div>
-          <div class="logMeta">Capped + auto-merged spam</div>
+        <div class="helper muted" id="helperText">
+          Growth is driven by buyers, volume, and market cap. Tap a colony to select it. Colonies can mutate, branch limbs, and form irregular shapes with auras and shockwaves.
         </div>
-        <div class="logList" id="logList"></div>
-      </div>
+      </section>
     </section>
 
-    <div class="toast" id="toast"></div>
-  </div>
+    <!-- Logs + Focus -->
+    <section class="grid2">
+      <!-- Mutation / Event Log -->
+      <section class="panel">
+        <div class="sectionTitle">
+          <span class="muted">MUTATION LOG</span>
+          <div class="logMeta muted" id="logMeta">Auto-merge spam • Capped</div>
+        </div>
 
-  <!-- MUST match your folders -->
-  <script src="./assets/js/script.js?v=wc-20260108-1"></script>
+        <div class="log" id="log"></div>
+
+        <div class="logActions">
+          <button class="btn btnMini" id="btnLogClear" type="button">Clear Log</button>
+          <button class="btn btnMini" id="btnLogPause" type="button">Pause Log</button>
+        </div>
+      </section>
+
+      <!-- Colony Focus -->
+      <section class="panel">
+        <div class="sectionTitle">
+          <span class="muted">COLONY FOCUS</span>
+          <span class="pill pillSoft" id="focusPill">Selected</span>
+        </div>
+
+        <div class="focusBox">
+          <div class="focusRow">
+            <div class="focusKey muted">Colony</div>
+            <div class="focusVal" id="focusColony">#1</div>
+          </div>
+          <div class="focusRow">
+            <div class="focusKey muted">DNA</div>
+            <div class="focusVal" id="focusDNA">—</div>
+          </div>
+          <div class="focusRow">
+            <div class="focusKey muted">Biome</div>
+            <div class="focusVal" id="focusBiome">—</div>
+          </div>
+          <div class="focusRow">
+            <div class="focusKey muted">Style</div>
+            <div class="focusVal" id="focusStyle">—</div>
+          </div>
+
+          <div class="badgeRow" id="focusBadges" aria-label="Colony Badges">
+            <!-- JS can inject colony badges here -->
+          </div>
+
+          <div class="muted focusHint">
+            Tip: tapping colonies changes focus. Double tap centers. Pinch zoom is enabled on iPhone.
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <footer class="footer muted">
+      <span>Worm Colony • $WORM</span>
+      <span class="sep">•</span>
+      <span id="buildTag">Build: v99</span>
+    </footer>
+  </main>
+
+  <noscript>
+    <div style="padding:16px;color:#fff;background:#000;">
+      This site needs JavaScript enabled to run the Worm Colony simulation.
+    </div>
+  </noscript>
+
+  <script src="./script.js?v=99"></script>
 </body>
 </html>
