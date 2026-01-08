@@ -349,3 +349,28 @@ body{
   .status .micro{ display:none; }
   .simViewport{ min-height: 320px; }
 }
+/* --- CRITICAL SIM FIX --- */
+.simWrap{
+  width:100%;
+}
+
+.simViewport{
+  position:relative;
+  width:100%;
+  height:50vh;
+  min-height:320px;
+  max-height:520px;
+  overflow:hidden;
+  border-radius:16px;
+}
+
+canvas#c{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+/* prevent any accidental image overrides */
+img{display:none !important}
